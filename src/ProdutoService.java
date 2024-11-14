@@ -3,7 +3,7 @@ public interface ProdutoService {
     void excluirProduto(int codigo);
     Produto buscarProduto(int codigo);
     void mostrarProdutos();
-    void verPrecoDoProduto();
     void mostrarUmProduto();
+    boolean verificarProdutoExiste(int codigo);
 }
 

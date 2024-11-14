@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class LojaJoias implements FuncionarioService, ProdutoService{
-    Dono dono = new Dono("Dono","M",40,"111");
+public class LojaJoias implements FuncionarioService, ProdutoService, PontoService, SecurityService {
+    Dono dono = new Dono("Dono","M",40,"111", "1234AQWS");
     ArrayList<FuncionariosDaLoja> funcionariosDaLoja = new ArrayList<>();
     ArrayList<ProdutosDaLoja> produtos = new ArrayList<>();
 
@@ -62,12 +62,14 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
                     break;
                 case 2:
                     baterPontoSaida();
+                    break;
                 case 3:
                     acoesSobreProduto();
                     break;
                 case 4:
-                    System.out.println("Voltando ao menu principal...");
+                    System.out.println("Voltando ao menu principal...\n");
                     executando = false;
+                    break;
                 default:
                     System.out.println("Resposta inválida");
             }
@@ -114,7 +116,8 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
 
             switch (resposta) {
                 case 1:
-                    acoesDonoDaLoja();
+                    autenticarSenha();
+
                     break;
                 case 2:
                     acoesFuncionario();
@@ -128,6 +131,7 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
             }
         }
     }
+
     public void exluirFuncionario() throws FuncionarioNaoEncontradoException{
         Scanner r = new Scanner(System.in);
         System.out.println("Digite o CPF do funcionario");
@@ -238,7 +242,6 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
         } catch (InputMismatchException e){
             System.out.println("Valor invalido. Se for número decimal digite com virgula e não ponto: Ex: 1448,58");
         }
-
     }
 
     public Funcionario buscarFuncionario(String cpf){
@@ -256,6 +259,7 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
             System.out.println(aux);
         }
     }
+
     public boolean verificarFuncionarioExiste(String cpf) {
         Funcionario f = buscarFuncionario(cpf);
         if(f != null){
@@ -273,7 +277,6 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
             throw new FuncionarioNaoEncontradoException("Funcionario não encontrado!");
         }
         System.out.println("Ponto de entrada feito com sucesso!");
-
     }
 
     @Override
@@ -286,7 +289,6 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
         }
 
         System.out.println("Ponto de saída feito com sucesso!");
-
     }
 
     @Override
@@ -333,8 +335,6 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
         }catch (InputMismatchException e) {
             System.out.println("Valor invalido. Se for número decimal digite com virgula e não ponto('.'): Ex: 14,58");
         }
-
-
     }
 
     @Override
@@ -369,23 +369,6 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
         for (ProdutosDaLoja aux:produtos){
             System.out.println(aux);
         }
-    }
-
-    @Override
-    public void verPrecoDoProduto() throws ProdutoNaoEncontradoException {
-        Scanner r = new Scanner(System.in);
-        System.out.println("Qual o código do produto?");
-        int codigo = r.nextInt();
-        r.nextLine();
-        if(!verificarProdutoExiste(codigo)){
-            throw  new ProdutoNaoEncontradoException("Produto não encontrado");
-        }
-        for (ProdutosDaLoja aux:produtos){
-            if(aux.codigo == codigo){
-                System.out.println("O preço do produto " + aux.nome + " é: " + aux.preco);
-            }
-        }
-
     }
 
     @Override
@@ -452,7 +435,7 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
                         int code = res.nextInt();
                         excluirProduto(code);
                         if(code < 0){
-                            throw new IllegalArgumentException("Codigo invalido");
+                            throw new IllegalArgumentException("Codigo invalido. O deve ser maior que 0");
                         }
                     }catch (IllegalArgumentException e){
                         System.out.println("erro: " + e.getMessage());
@@ -490,7 +473,7 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
                 System.out.println("Nova quantidade em estoque do produto " + produto.nome + ": " + novaQtd);
 
             } else if (qtd == produto.qtdDoProduto) {
-                System.out.println("AVISO: A quantidade da venda é igual ao estoque. Deseja continuar?\n[1]-Sim \n[2]-Não");
+                System.out.println("\nAVISO: A quantidade da venda é igual ao estoque. Deseja continuar?\n[1]-Sim \n[2]-Não\n");
                 int resposta = res.nextInt();
                 res.nextLine();
 
@@ -498,7 +481,7 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
                     case 1:
                         System.out.println("Produto pronto para venda. Finalize com pagamento.");
                         confirmarVenda();
-                        System.out.println("------\nAVISO: O ESTOQUE DESTE PRODUTO FOI ZERADO------");
+                        System.out.println("------\nAVISO: O ESTOQUE DESTE PRODUTO FOI ZERADO------\n");
                         produto.qtdDoProduto = 0;
                         System.out.println("Produto " + produto.nome + " esgotado.");
                         break;
@@ -511,7 +494,7 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
             }
 
         } else {
-            System.out.println("Produto com o código " + codigo + " não encontrado!");
+            System.out.println("Produto com o código " + codigo + " não encontrado!\n");
         }
     }
     public void confirmarVenda() throws ValorInvalidoException{
@@ -526,13 +509,12 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
                 System.out.println("Venda realizada com sucesso");
                 break;
             case 2:
-                System.out.println("Venda cancelada");
+                System.out.println("Venda cancelada\n");
                 break;
             default:
-                System.out.println("Resposta inválida");
+                System.out.println("Resposta inválida\n");
         }
     }
-
 
     public void criarProduto() {
         ProdutosDaLoja p1 = new ProdutosDaLoja("Cordão de rosas", 1, 20, 15.2f, "ouro");
@@ -546,5 +528,27 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
         funcionariosDaLoja.add(f1);
         FuncionariosDaLoja f2 = new FuncionariosDaLoja("Maria Aline Silveira", "F",28,"333", "Vendedor",1448.53);
         funcionariosDaLoja.add(f2);
+    }
+
+    @Override
+    public void autenticarSenha() {
+        try{
+            Scanner s = new Scanner(System.in);
+            System.out.println("Qual a senha de acesso do Dono?");
+            String senha = s.nextLine();
+
+            if(senha.isEmpty()){
+                throw new IllegalArgumentException("Valor inválido. Digite a senha novamente");
+            }
+            if(senha.equalsIgnoreCase("1234AQWS")){
+                System.out.println("\n-----------ACESSO LIBERADO--------\n\n\n");
+                acoesDonoDaLoja();
+            }else if(!senha.equalsIgnoreCase("1234AQWS")){
+                System.out.println("\n-----------SENHA INVÁLIDA--------\n\n\n");
+            }
+        }catch (IllegalArgumentException e){
+            System.out.println("Erro: " + e.getMessage());
+        }
+
     }
 }
