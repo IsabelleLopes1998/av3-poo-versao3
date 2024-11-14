@@ -117,7 +117,6 @@ public class LojaJoias implements FuncionarioService, ProdutoService, PontoServi
             switch (resposta) {
                 case 1:
                     autenticarSenha();
-
                     break;
                 case 2:
                     acoesFuncionario();
