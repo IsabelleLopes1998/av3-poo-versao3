@@ -1,8 +1,8 @@
 public abstract class Funcionario extends Pessoa {
     protected String cargo;
-    float salario;
+    double salario;
 
-    public Funcionario(String nome, String sexo, int idade, String cpf, String cargo, float salario) throws IllegalArgumentException {
+    public Funcionario(String nome, String sexo, int idade, String cpf, String cargo, double salario) throws IllegalArgumentException {
         super(nome, sexo, idade, cpf);
         try{
             if(cargo == null || cargo.isEmpty()){

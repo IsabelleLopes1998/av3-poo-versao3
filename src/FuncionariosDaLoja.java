@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class FuncionariosDaLoja extends Funcionario {
 
-    public FuncionariosDaLoja(String nome, String sexo, int idade, String cpf, String cargo, float salario) throws IllegalArgumentException {
+    public FuncionariosDaLoja(String nome, String sexo, int idade, String cpf, String cargo, double salario) throws IllegalArgumentException {
         super(nome, sexo, idade, cpf, cargo, salario);
     }
 

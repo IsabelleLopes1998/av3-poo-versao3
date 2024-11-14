@@ -1,10 +1,12 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class LojaJoias implements FuncionarioService, ProdutoService{
     Dono dono = new Dono("Dono","M",40,"111");
     ArrayList<FuncionariosDaLoja> funcionariosDaLoja = new ArrayList<>();
     ArrayList<ProdutosDaLoja> produtos = new ArrayList<>();
+
 
 
 
@@ -51,8 +53,7 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
                     "\n[1]-bater o ponto de entrada." +
                     "\n[2]-bater ponto de saída." +
                     "\n[3]-Ações sobre o pronduto." +
-                    "\n[4]-Ações sobre o cliente" +
-                    "\n[5]-Voltar");
+                    "\n[4]-Voltar");
             int resposta = res.nextInt();
 
             switch (resposta){
@@ -65,9 +66,6 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
                     acoesSobreProduto();
                     break;
                 case 4:
-                    //acoesSobreCliente();
-                    break;
-                case 5:
                     System.out.println("Voltando ao menu principal...");
                     executando = false;
                 default:
@@ -77,37 +75,40 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
     }
 
     public void iniciarSistema() {
-        System.out.println("Deseja iniciar o sistema? \n[1]-Sim \n[2]-Não \n[3]-Finalizar Sistema");
+        System.out.println("Deseja iniciar o sistema? \n[1]-Sim \n[2]-Sair do Sistema");
         Scanner res = new Scanner(System.in);
         int r = res.nextInt();
         res.nextLine();
+        switch (r){
+            case 1:
+                System.out.println(
+                        "\n-------------------------Iniciando o sistema------------------------\n" +
+                                "\n--------------------------------------------------------------------" +
+                                "\n--------------------------------------------------------------------" +
+                                "\n--------------------------------------------------------------------" +
+                                "\n--------------------------------------------------------------------" +
+                                "\n--------------------------------------------------------------------" +
+                                "\n--------------------------------------------------------------------\n");
+                criarFuncionario();
+                criarProduto();
+                iniciarOperacoes();
+                break;
 
-        if (r == 1) {
-            System.out.println(
-                    "\n-------------------------Iniciando o sistema------------------------\n" +
-                    "\n--------------------------------------------------------------------" +
-                    "\n--------------------------------------------------------------------" +
-                    "\n--------------------------------------------------------------------" +
-                    "\n--------------------------------------------------------------------" +
-                    "\n--------------------------------------------------------------------" +
-                    "\n--------------------------------------------------------------------\n");
-            criarFuncionario();
-            criarProduto();
-            iniciarOperacoes();
-
-        } else {
-            System.out.println("\n-------------------Inicialização do sistema cancelada-------------------\n");
+            case 2:
+                System.out.println("\n-------------------SISTEMA DA LOJA FINALIZADO-------------------\n");
+                break;
         }
     }
 
     private void iniciarOperacoes() {
         Scanner res = new Scanner(System.in);
         boolean run = true;
+
         while (run) {
             System.out.println("Qual o seu cargo? " +
                     "\n[1]-Dono" +
                     "\n[2]-Funcionário" +
-                    "\n[3]-Voltar");
+                    "\n[3]-Finalizar Sistema");
             int resposta = res.nextInt();
             res.nextLine();
 
@@ -119,7 +120,8 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
                     acoesFuncionario();
                     break;
                 case 3:
-                    run =false;
+                    System.out.println("\n-------------------SISTEMA DA LOJA FINALIZADO-------------------\n");
+                    run = false;
                     break;
                 default:
                     System.out.println("Resposta inválida");
@@ -183,49 +185,60 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
             }
 
             System.out.println("Qual o salario do novo funcionário: ");
-            float salario = res.nextFloat();
+            double salario = res.nextDouble();
 
             if(salario <= 0) {
                 throw new IllegalArgumentException("O salário deve ser maior que 0");
             }
 
-            FuncionariosDaLoja f1 = new FuncionariosDaLoja(nome, sexo, idade, cpf, cargo, salario);
-            System.out.println("Novo funcionario(a) " + f1.nome + " cadastrado com sucesso");
-            funcionariosDaLoja.add(f1);
+            FuncionariosDaLoja f = new FuncionariosDaLoja(nome, sexo, idade, cpf, cargo, salario);
+            System.out.println("Novo funcionario(a) " + f.nome + " cadastrado com sucesso");
+            funcionariosDaLoja.add(f);
         }catch (IllegalArgumentException e){
             System.out.println("erro: " + e.getMessage());
+        }catch (InputMismatchException e) {
+            System.out.println("Valor invalido. Se for número decimal digite com virgula e não ponto: Ex: 1448,58");
         }
-
     }
 
-    public double calcularSalarioComBonusVendedor(double porcentagem, float salario) {
-        if(porcentagem<=0 || salario <=0) {
+    public double calcularSalarioComBonusVendedor(double porcentagem, double salario) {
             try {
-                throw new ValorInvalidoException("O valor deve ser maior que zero");
-            } catch (ValorInvalidoException e) {
-                System.out.println(e.getMessage());
+                if(porcentagem<=0 || salario <=0) {
+                    throw new ValorInvalidoException("O valor deve ser maior que zero");
+                }
+            } catch (ValorInvalidoException e){
+                    System.out.println("erro: " + e.getMessage());
             }
-        }
-        return salario + (salario * (porcentagem / 100));
+            return salario + (salario * (porcentagem / 100));
     }
 
-    public void mostrarCalculoBonus() throws IllegalArgumentException{
-        Scanner r = new Scanner(System.in);
-        System.out.println("Qual o salario do vendedor?");
-        float salario = r.nextFloat();
-        r.nextLine();
-        if(salario < 0){
-            throw new IllegalArgumentException("Valo inválido. Digite um valor maior que 0");
-        }
-        System.out.println("Qual o percentual que deseja aplicar no salario dele?");
-        double porcentagem = r.nextDouble();
-        r.nextLine();
+    public void mostrarCalculoBonus(){
+        try{
+            Scanner r = new Scanner(System.in);
+            System.out.println("Qual o salario do vendedor?");
+            double salario = r.nextDouble();
+            r.nextLine();
 
-        if(porcentagem < 0){
-            throw new IllegalArgumentException("Valo inválido. Digite um valor maior que 0");
+            if(salario <= 0){
+                throw new ValorInvalidoException("Valo inválido. Digite um valor maior que 0");
+            }
+            System.out.println("Qual o percentual que deseja aplicar no salario dele?");
+            double porcentagem = r.nextDouble();
+            r.nextLine();
+
+            if(porcentagem <= 0){
+                throw new ValorInvalidoException("Valo inválido. Digite um valor maior que 0");
+            }
+
+            double salarioComBonus = calcularSalarioComBonusVendedor(porcentagem, salario);
+            System.out.println("O salário com o bonus é:" + salarioComBonus);
+
+        } catch (ValorInvalidoException e) {
+            System.out.println("erro: " + e.getMessage());
+        } catch (InputMismatchException e){
+            System.out.println("Valor invalido. Se for número decimal digite com virgula e não ponto: Ex: 1448,58");
         }
-        double salarioComBonus = calcularSalarioComBonusVendedor(porcentagem, salario);
-        System.out.println("O salário com o bonus é:" + salarioComBonus);
+
     }
 
     public Funcionario buscarFuncionario(String cpf){
@@ -317,8 +330,9 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
 
         }catch (IllegalArgumentException e){
             System.out.println("erro: " + e.getMessage());
+        }catch (InputMismatchException e) {
+            System.out.println("Valor invalido. Se for número decimal digite com virgula e não ponto('.'): Ex: 14,58");
         }
-
 
 
     }
@@ -407,7 +421,7 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
         while (run) {
             Scanner res = new Scanner(System.in);
             System.out.println("""
-                    Digite uma das opções: \
+                    \nDigite uma das opções: \
                     
                     [0]-Vender Produto \
                     
@@ -518,15 +532,19 @@ public class LojaJoias implements FuncionarioService, ProdutoService{
                 System.out.println("Resposta inválida");
         }
     }
+
+
     public void criarProduto() {
-        ProdutosDaLoja p1 = new ProdutosDaLoja("Cordão de rosas", 2, 20, 15.2f, "ouro");
+        ProdutosDaLoja p1 = new ProdutosDaLoja("Cordão de rosas", 1, 20, 15.2f, "ouro");
         produtos.add(p1);
         ProdutosDaLoja p2 = new ProdutosDaLoja("Anel de rosas", 2, 12, 15.2f, "ouro");
         produtos.add(p2);
     }
 
     public void criarFuncionario(){
-        FuncionariosDaLoja f1 = new FuncionariosDaLoja("João Rodrigues Silva", "M",25,"222", "Vendedor",1448.53f);
-        FuncionariosDaLoja f2 = new FuncionariosDaLoja("Maria Aline Silveira", "F",28,"333", "Vendedor",1448.53f);
+        FuncionariosDaLoja f1 = new FuncionariosDaLoja("João Rodrigues Silva", "M",25,"222", "Vendedor",1448.53);
+        funcionariosDaLoja.add(f1);
+        FuncionariosDaLoja f2 = new FuncionariosDaLoja("Maria Aline Silveira", "F",28,"333", "Vendedor",1448.53);
+        funcionariosDaLoja.add(f2);
     }
 }

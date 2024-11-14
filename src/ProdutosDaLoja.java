@@ -15,11 +15,11 @@ public class ProdutosDaLoja extends Produto{
 
     @Override
     public String toString() {
-        return "ProdutosDaLoja: " +
-                "nome:" + nome +
+        return "Produtos da loja: " +
+                " nome: " + nome +
                 ", codigo: " + codigo +
                 ", qtdDoProduto: " + qtdDoProduto +
                 ", preco: " + preco +
-                ", material: " + material;
+                ", material: " + material + "\n";
     }
 }
