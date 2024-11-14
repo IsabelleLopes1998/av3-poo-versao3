@@ -234,7 +234,7 @@ public class LojaJoias implements FuncionarioService, ProdutoService, PontoServi
             }
 
             double salarioComBonus = calcularSalarioComBonusVendedor(porcentagem, salario);
-            System.out.println("O salário com o bonus é:" + salarioComBonus);
+            System.out.println("O salário com o bonus é: " + salarioComBonus);
 
         } catch (ValorInvalidoException e) {
             System.out.println("erro: " + e.getMessage());
